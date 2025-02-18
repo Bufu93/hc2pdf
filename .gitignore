@@ -3,3 +3,4 @@ hc2pdf
 **/*.html
 out/
 server
+server~
