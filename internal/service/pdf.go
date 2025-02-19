@@ -1,41 +1,18 @@
-package main
+package pdf
 
 import (
 	"bytes"
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"html/template"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
+
+	"github.com/Bufu93/hc2pdf/internal/transport/rest"
 )
-
-var styles template.CSS
-
-func init() {
-	contents, err := os.ReadFile("./templates/styles.css")
-	if err != nil {
-		panic(err)
-	}
-	styles = template.CSS(contents)
-}
-
-
-var pdfTemplate = template.Must(template.ParseFiles("./templates/layout.html.tmpl"))
-
-type Page struct {
-	Styles template.CSS
-}
-
-func generateFilename() string {
-	var bytes = make([]byte, 10)
-	rand.Read(bytes[:])
-	return fmt.Sprintf("%x", bytes)
-}
 
 var chromeFlags = []string{
 	"--headless",
@@ -74,27 +51,53 @@ var chromeFlags = []string{
 
 const ChromiumExecutable = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
-func generatePdfFromSource(source []byte) ([]byte, error) {
-	outDir, err := filepath.Abs("./out")
+
+type PdfService struct {
+	source []byte
+}
+
+func NewPdf(s []byte) *PdfService {
+ return &PdfService{
+	source: s,
+ }
+}
+
+func (p *PdfService) GeneratePdfFromSource(req rest.PdfRequest) ([]byte, error) {
+	// Create a complete HTML document with CSS and JS included
+	htmlContent := fmt.Sprintf(`
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>PDF Document</title>
+			<style>%s</style>
+			<script>%s</script>
+		</head>
+		<body>
+			%s
+		</body>
+		</html>
+	`, req.CSS, req.JS, req.HTML)
+
+	source := []byte(htmlContent) // Use the modified HTML content
+
+	outDir, err := filepath.Abs("./tmp/dynamic")
 	if err != nil {
 		return nil, err
 	}
-
-	// Clear the output directory
-	if err := clearDirectory(outDir); err != nil {
-		return nil, err
-	}
-	
 
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		return nil, err
 	}
 
+	if err := clearDirectory(outDir); err != nil {
+		return nil, err
+	}
+
 	name := generateFilename()
-	tmpFile := path.Join(outDir, name + ".html")
-	outFile := path.Join(outDir, name + ".pdf")
+	tmpFile := path.Join(outDir, name+".html")
+	outFile := path.Join(outDir, name+".pdf")
 	args := append(chromeFlags, fmt.Sprintf("--print-to-pdf=%s", outFile), tmpFile)
-	
+
 	os.WriteFile(tmpFile, source, 0o644)
 
 	out := bytes.NewBuffer([]byte{})
@@ -107,7 +110,42 @@ func generatePdfFromSource(source []byte) ([]byte, error) {
 		log.Print(err)
 		return nil, errors.New(out.String())
 	}
-	
+
+	return os.ReadFile(outFile)
+}
+
+func(p *PdfService) GeneratePdfFromTemplateSource() ([]byte, error) {
+	outDir, err := filepath.Abs("./tmp/static")
+	if err != nil {
+		return nil, err
+	}
+
+	if err := os.MkdirAll(outDir, 0o755); err != nil {
+		return nil, err
+	}
+
+	if err := clearDirectory(outDir); err != nil {
+		return nil, err
+	}
+
+	name := generateFilename()
+	tmpFile := path.Join(outDir, name+".html")
+	outFile := path.Join(outDir, name+".pdf")
+	args := append(chromeFlags, fmt.Sprintf("--print-to-pdf=%s", outFile), tmpFile)
+
+	os.WriteFile(tmpFile, p.source, 0o644)
+
+	out := bytes.NewBuffer([]byte{})
+
+	cmd := exec.Command(ChromiumExecutable, args...)
+	cmd.Stderr = out
+	cmd.Stdout = out
+
+	if err := cmd.Run(); err != nil {
+		log.Print(err)
+		return nil, errors.New(out.String())
+	}
+
 	return os.ReadFile(outFile)
 }
 
@@ -127,23 +165,8 @@ func clearDirectory(dir string) error {
 	return nil
 }
 
-func main() {
-	source := bytes.NewBuffer([]byte{})
-	pdfTemplate.Execute(source, Page{
-		Styles: styles,
-	})
-
-	http.Handle("/pdf", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pdf, err := generatePdfFromSource(source.Bytes())
-		if err != nil {
-			w.Header().Add("Content-Type", "text/plain; charset=utf-8")
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-		}
-		w.Write(pdf)
-	}))
-	log.Print("Listening on port :3000")
-	log.Fatal(http.ListenAndServe(":3000", nil))
-
-	fmt.Println(source.String())
+func generateFilename() string {
+	var bytes = make([]byte, 10)
+	rand.Read(bytes[:])
+	return fmt.Sprintf("%x", bytes)
 }
