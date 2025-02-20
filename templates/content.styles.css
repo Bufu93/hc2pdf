@@ -1,9 +1,396 @@
+@charset "UTF-8";
+
 @page {
-	size: A4;
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
+  size: A4;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+  color: #000000;
+}
+html * {
+  font-family: "Arial", sans-serif !important;
+}
+
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+:focus,
+:active {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+nav,
+footer,
+header,
+aside {
+  display: block;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  line-height: 1;
+  font-size: 14px;
+  font-family: "Arial", sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+a {
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+img {
+  vertical-align: top;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: 400;
 }
 
 .container {
-	display: FLEX;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+@media (max-width: 1449.98px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+@media (max-width: 991.98px) {
+  .container {
+    max-width: 970px;
+  }
+}
+@media (max-width: 767.98px) {
+  .container {
+    max-width: 740px;
+  }
+}
+@media (max-width: 479.98px) {
+  .container {
+    max-width: none;
+  }
+}
+
+body {
+  min-width: 320px;
+}
+body.locked {
+  overflow: hidden;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.ndfl {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 100px 0;
+}
+@media (max-width: 1416px) {
+  .ndfl {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.ndfl h1 {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 109%;
+  text-align: center;
+  color: #000;
+  margin-bottom: 27px;
+}
+.ndfl p {
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 100%;
+  letter-spacing: 0.2px;
+  text-align: left;
+  color: #000;
+  padding-bottom: 18px;
+}
+.ndfl__container {
+  flex: none;
+  width: 1736px;
+  height: 2455.6px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background: #fff;
+  padding: 40px;
+  padding-bottom: 100px;
+  /* position: relative; */
+  page-break-inside: avoid; /* Запретить перенос на следующую страницу */
+  break-inside: avoid;
+}
+.ndfl-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 88px;
+}
+.ndfl-header__barcode {
+  width: 373px;
+  height: 109px;
+  margin-right: 83px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.ndfl-header__barcode--fake {
+  background: black;
+  display: block;
+  width: 42px;
+  height: 42px;
+}
+.ndfl-header__info {
+  margin-right: 171px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ndfl-header__info-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ndfl-header__text {
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 120%;
+  color: #000;
+  white-space: nowrap;
+  text-align: right;
+}
+.ndfl .field {
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 120%;
+  color: #000;
+  display: flex;
+  align-items: center;
+}
+.ndfl .field.nth20 .cell:nth-child(20n) {
+  /* Устанавливаем правую границу для каждого 40-го элемента */
+  border-right: 0.5px dashed #000;
+}
+.ndfl .field__name {
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 120%;
+  color: #000;
+}
+.ndfl .ndfl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ndfl .fgap5 {
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+}
+.ndfl .persone-info {
+  border-top: 2px solid #000;
+  display: flex;
+  margin-top: 22px;
+}
+.ndfl .persone-info__left {
+  border-right: 2px solid #000;
+  width: 868px;
+  flex: none;
+  padding-top: 11px;
+  padding-right: 38px;
+  padding-bottom: 100px;
+}
+.ndfl .persone-info__right {
+  width: 100%;
+}
+
+.lodash {
+  border-bottom: 2px solid #000;
+  width: 100%;
+  align-self: flex-end;
+  position: relative;
+}
+
+.cell {
+  border: 2px dashed #000; /* Пунктирная граница */
+  width: 41.35px; /* Ширина ячейки */
+  height: 50.4px; /* Высота ячейки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex: none;
+  font-size: 34px;
+}
+.cell:not(:last-child) {
+  /* Убираем правую границу у всех, кроме каждого 40-го элемента */
+  border-right: none;
+}
+.cell:nth-child(40n) {
+  /* Устанавливаем правую границу для каждого 40-го элемента */
+  border-right: 0.5px dashed #000;
+}
+.cell__container {
+  display: flex;
+  box-sizing: border-box;
+  gap: 16px 0px; /* Отступы между ячейками */
+  flex-wrap: wrap;
+}
+.cell svg {
+  width: 50px;
+  height: 50px;
+}
+
+body {
+  width: 100%;
+  position: relative;
+  box-sizing: content-box;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  background: lightgray;
+}
+
+.fake {
+  position: fixed;
+  width: 41px;
+  height: 41px;
+  background: #000000;
+}
+
+@media print {
+  .ndfl {
+    display: block;
+    height: 100%;
+    padding: 0;
+  }
+  .fake {
+    position: fixed;
+    width: 41px;
+    height: 41px;
+    background: #000000;
+  }
+  .ndfl__container {
+    box-shadow: none;
+    padding: 40px;
+    padding-bottom: 100px;
+    margin: 0;
+    height: auto;
+  }
+  body {
+    margin: 0; /* Уберите поля */
+    padding: 0; /* Уберите отступы */
+    background: transparent;
+  }
+  .print-btn {
+    display: none;
+  }
+  .panel {
+    display: none !important;
+  }
+  .print-area {
+    zoom: 60% !important;
+    height: 100% !important;
+  }
+}
+.print-area {
+  zoom: 40%;
+  /* size: A4; */
+  position: relative;
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background: #fff;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  padding: 20px;
+  padding-right: 50px;
+  z-index: 999;
+}
+.panel button {
+  background: transparent;
+  border: 1px solid black;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.3s linear;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+.panel button:hover {
+  opacity: 0.6;
+}
+.panel button:disabled {
+  opacity: 0.3;
+}
+
+.faximi {
+  position: absolute;
+  top: -108px;
+  left: 0;
 }
