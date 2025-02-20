@@ -49,8 +49,8 @@ var chromeFlags = []string{
 	"--no-sandbox",
 }
 
-// const ChromiumExecutable = "chromium"
-const ChromiumExecutable = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+const ChromiumExecutable = "chromium"
+// const ChromiumExecutable = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
 
 type PdfService struct {
