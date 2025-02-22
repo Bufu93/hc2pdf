@@ -49,8 +49,8 @@ var chromeFlags = []string{
 	"--no-sandbox",
 }
 
-const ChromiumExecutable = "chromium"
-// const ChromiumExecutable = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+// const ChromiumExecutable = "chromium"
+const ChromiumExecutable = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
 
 type PdfService struct {
@@ -71,13 +71,14 @@ func (p *PdfService) GeneratePdfFromSource(req rest.PdfRequest) ([]byte, error) 
 		<head>
 			<title>PDF Document</title>
 			<style>%s</style>
-			<script>%s</script>
+			
 		</head>
 		<body>
 			%s
+			<script>%s</script>
 		</body>
 		</html>
-	`, req.CSS, req.JS, req.HTML)
+	`, req.CSS, req.HTML, req.JS)
 
 	source := []byte(htmlContent) // Use the modified HTML content
 
