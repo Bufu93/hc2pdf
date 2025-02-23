@@ -8,5 +8,145 @@
     <main>
         {{ .HTML }}
     </main>
+    <script>
+      class McxxiNdflDoc {
+  constructor(params) {
+    this.id = params.id;
+
+    this.init();
+  }
+
+  init() {
+    const fields = Array.from(document.querySelectorAll(".field"));
+
+    fields.forEach((field) => {
+      const { cells, cellText, width, fz, variant } = field.dataset;
+      const letters = cellText.toUpperCase().split("");
+      const fieldName = field.querySelector(".field__name");
+      if (fieldName) {
+        fieldName.style.width = `${width}px`;
+        fieldName.style.fontSize = `${fz}px`;
+      }
+
+      const cellContainer = document.createElement("div");
+      cellContainer.classList.add("cell__container");
+
+      let result = ``;
+      const numberOfCells = parseInt(cells, 10); // Преобразуем строку в число
+      for (let i = 0; i < numberOfCells; i++) {
+        if (variant) {
+          if (variant === "date") {
+            if (i === 1 || i === 3) {
+              result += `<div style="border-right:0.50px dashed #000!important" class="cell">${
+                letters[i] || ""
+              }</div><div style="padding-left: 15px; padding-right:15px; display:flex;align-items:center;"><svg width="10" height="10" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
+		  <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
+		</svg></div>`; // Добавляем текст ячейки, если он есть
+            } else {
+              result += `<div class="cell">${letters[i] || ""}</div>`;
+            }
+          }
+          if (variant === "serviceCode") {
+            if (i === 12) {
+              result += `<div style="border-right:0.50px dashed #000!important" class="cell">${
+                letters[i] || ""
+              }</div><div style="padding-left: 15px; padding-right:15px; display:flex;align-items:center;"><svg width="10" height="10" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
+		  <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
+		</svg></div>`; // Добавляем текст ячейки, если он есть
+            } else {
+              result += `<div class="cell">${letters[i] || ""}</div>`;
+            }
+          }
+        } else {
+          result += `<div class="cell">${letters[i] || ""}</div>`; // Добавляем текст ячейки, если он есть
+        }
+      }
+      cellContainer.innerHTML = result;
+      field.appendChild(cellContainer);
+    });
+
+    const targetNode = document.querySelector(".ndfl-copy");
+    if (!targetNode) {
+      console.error("Элемент .ndfl-copy не найден");
+      return;
+    }
+
+    const content = targetNode.innerHTML;
+
+    window.saveJS = JSON.stringify(content);
+
+    // Функция для экранирования HTML для JSON
+    document.querySelector("#html").value = JSON.stringify(content);
+    // console.log(JSON.stringify(content));
+    // console.log(JSON.stringify(content));
+  }
+
+  get sessid() {
+    return BX.bitrix_sessid();
+  }
+
+  get url() {
+    return (
+      "/local/components/mc21.services/ndfl/templates/doc/ajax.php?sessid=" +
+      this.sessid
+    );
+  }
+
+  onSend() {
+    const mail = "мыло куда шлем";
+
+    const params = {
+      action: "send_mail",
+      id: this.id,
+      mail: mail,
+    };
+
+    $.ajax({
+      url: this.url,
+      type: "POST",
+      data: JSON.stringify(params),
+      dataType: "json",
+      contentType: "application/json",
+    })
+      .done((msg) => {
+        if (msg.status == "success") {
+        } else {
+        }
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {});
+  }
+  createPdf() {
+    const html = document.querySelector(".ndfl-copy").innerHTML;
+    const params = {
+      action: "generate_pdf",
+      html: html,
+      css: saveCSS,
+    };
+
+    $.ajax({
+      url: this.url,
+      type: "POST",
+      data: JSON.stringify(params),
+      contentType: "application/json; charset=utf-8", // Указываем кодировку UTF-8
+    })
+      .done((response) => {
+        var a = document.createElement("a");
+        a.href = "data:application/octet-stream;base64," + response;
+        a.target = "_blank";
+        a.download = "document.pdf";
+        a.click();
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        console.error("Error generating PDF:", textStatus, errorThrown);
+      });
+  }
+  onPrint() {
+    window.print();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => new McxxiNdflDoc({id: 123}));
+</script>
+    
   </body>
 </html>
